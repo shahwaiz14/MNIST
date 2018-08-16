@@ -22,12 +22,16 @@ b2 = tf.Variable(tf.random_normal([1]))
 
 yt = tf.nn.softmax(tf.matmul(a1,w2) + b2)
 
-# using the l2 norm
+# using the l2 norm (without regularization)
 lossBatch = tf.nn.l2_loss(y-yt)/(2*batchSize)
-##cross = tf.reduce_mean(
-##    tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yt))
 
-train = tf.train.GradientDescentOptimizer(6.8).minimize(lossBatch)
+#regularization term with the r. parameter = 0.81
+reg = 0.81*(tf.nn.l2_loss(w1) + tf.nn.l2_loss(w2))/batchSize
+
+#loss with the regularization term
+loss = lossBatch + reg
+
+train = tf.train.GradientDescentOptimizer(6.8).minimize(loss)
 
 accuracy = tf.reduce_mean(
     tf.cast(tf.equal(tf.argmax(yt,1),tf.argmax(y,1)),tf.float32))
